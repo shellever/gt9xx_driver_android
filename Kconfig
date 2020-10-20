@@ -33,3 +33,57 @@ config TOUCHSCREEN_GT9XX_TOOL
 	  to your system.
 
 	  If unsure, say N.
+config TOUCHSCREEN_GT9XX_ROTATE_90
+	bool "Goodix GT9xx ts rotate 90"
+	default n
+	help
+	Say Y here if you have the touch panel rotate 90.
+
+	If unsure, say N.
+
+	To compile this dirver as a module, choose M here: the
+	module will be called.
+
+config TOUCHSCREEN_GT9XX_ROTATE_180
+	bool "Goodix GT9xx ts rotate 180"
+	default n
+	help
+	Say Y here if you have the touch panel rotate 180.
+
+	If unsure, say N.
+
+	To compile this dirver as a module, choose M here: the
+	module will be called.
+
+config TOUCHSCREEN_GT9XX_ROTATE_270
+	bool "Goodix GT9xx ts rotate 270"
+	default n
+	help
+	Say Y here if you have the touch panel rotate 270.
+
+	If unsure, say N.
+
+	To compile this dirver as a module, choose M here: the
+	module will be called.
+	
+config TOUCHSCREEN_GT9XX_ROTATE_X_180
+	bool "Goodix GT9xx ts rotate x axis 180"
+	default n
+	help
+	Say Y here if you have the touch panel rotate x axis 180.
+
+	If unsure, say N.
+
+	To compile this dirver as a module, choose M here: the
+	module will be called.
+	
+config TOUCHSCREEN_GT9XX_ROTATE_Y_180
+	bool "Goodix GT9xx ts rotate y axis 180"
+	default n
+	help
+	Say Y here if you have the touch panel rotate y axis 180.
+
+	If unsure, say N.
+
+	To compile this dirver as a module, choose M here: the
+	module will be called.

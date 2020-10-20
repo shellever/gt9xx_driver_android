@@ -332,6 +332,88 @@ static int gtp_gesture_handler(struct goodix_ts_data *ts)
 	return 0;
 }
 
+
+// Goodix GT9XX Touch Panel Rotation
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_90) || defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_270) || defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_180)
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_90) || defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_270)
+static void gtp_swap_xy(int *x, int *y)
+{
+	int temp = 0;
+
+	temp = *x;
+	*x = *y;
+	*y = temp;
+}
+#endif
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_90)
+static void gtp_rotate_90(struct goodix_ts_data *ts, int *x, int *y)
+{
+    u32 x_max = ts->pdata->abs_size_x;
+    u32 y_max = ts->pdata->abs_size_y;
+    
+	*x = x_max + 1 - *x;
+
+	*x = (*x * y_max) / x_max;
+	*y = (*y * x_max) / y_max;
+
+	gtp_swap_xy(x, y);
+}
+#endif
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_180)
+static void gtp_rotate_180(struct goodix_ts_data *ts, int *x, int *y)
+{
+    u32 x_max = ts->pdata->abs_size_x;
+    u32 y_max = ts->pdata->abs_size_y;
+    
+	*x = x_max - *x;
+	*y = y_max - *y;
+}
+#endif
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_270)
+static void gtp_rotate_270(struct goodix_ts_data *ts, int *x, int *y)
+{
+    u32 x_max = ts->pdata->abs_size_x;
+    u32 y_max = ts->pdata->abs_size_y;
+    
+	*y = y_max + 1 - *y;
+
+	*x = (*x * y_max) / x_max;
+	*y = (*y * x_max) / y_max;
+
+	gtp_swap_xy(x, y);
+}
+#endif
+
+#endif
+
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_X_180) || defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_Y_180)
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_X_180)
+static void gtp_rotate_x_180(struct goodix_ts_data *ts, int *x)
+{
+    u32 x_max = ts->pdata->abs_size_x;
+    
+	*x = x_max - *x;
+}
+#endif
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_Y_180)
+static void gtp_rotate_y_180(struct goodix_ts_data *ts, int *y)
+{
+    u32 y_max = ts->pdata->abs_size_y;
+    
+	*y = y_max - *y;
+}
+#endif
+
+#endif
+
+
 /*
  * return touch state register value
  * pen event id fixed with 9 and set tool type TOOL_PEN
@@ -400,6 +482,18 @@ static u8 gtp_get_points(struct goodix_ts_data *ts,
 
 		if (ts->pdata->swap_x2y)
 			GTP_SWAP(points[i].x, points[i].y);
+
+#if defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_90)
+        gtp_rotate_90(ts, &points[i].x, &points[i].y);
+#elif defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_180)
+        gtp_rotate_180(ts, &points[i].x, &points[i].y);
+#elif defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_270)
+        gtp_rotate_270(ts, &points[i].x, &points[i].y);
+#elif defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_X_180)
+        gtp_rotate_x_180(ts, &points[i].x);
+#elif defined(CONFIG_TOUCHSCREEN_GT9XX_ROTATE_Y_180)
+        gtp_rotate_y_180(ts, &points[i].y);
+#endif
 
 		dev_dbg(&ts->client->dev, "[%d][%d %d %d]\n",
 			points[i].id, points[i].x, points[i].y, points[i].p);
